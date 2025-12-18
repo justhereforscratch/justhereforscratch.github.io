@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sora Video Generator</title>
+</head>
+<body style="background:#111;color:#fff;font-family:sans-serif">
+
+<h2>🎥 Sora AI Video Generator</h2>
+
+<textarea id="prompt" rows="4" cols="40"
+placeholder="Describe a child-safe scene..."></textarea><br><br>
+
+<label>Seconds (max 10):</label>
+<input id="seconds" type="number" value="5" max="10"><br><br>
+
+<button onclick="generate()">Generate</button>
+
+<p id="status"></p>
+<video id="video" controls style="max-width:300px;display:none"></video>
+
+<script>
+async function generate() {
+  status.textContent = "Generating...";
+  video.style.display = "none";
+
+  const r = await fetch("https://https://weathered-morning-34c8.uffer26.workers.dev/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      prompt: prompt.value,
+      seconds: Number(seconds.value)
+    })
+  });
+
+  const data = await r.json();
+
+  if (data.error) {
+    status.textContent = "❌ " + data.error;
+    return;
+  }
+
+  const url = data.data[0].url;
+  video.src = url;
+  video.style.display = "block";
+  status.textContent = "✅ Done";
+}
+</script>
+
+</body>
+</html>
